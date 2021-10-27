@@ -113,3 +113,32 @@ This is mostly a note for me on how to release this thing:
 - `cargo release`
 - Release will automatically be deployed by Github Actions.
 - Update Arch package.
+
+
+## Using wmfocus with bspwm: branch "stdin"
+
+@ortango (see 
+https://www.reddit.com/r/bspwm/comments/qf0jd5/switching_and_swapping_windows_with/hi9ppyy/
+) has modified the code so that wmfocus can take a list of windows as input,
+which allows wmfocus to be used with bspwm. The original files are provided in
+https://gist.github.com/ortango/5333a193bb4141d65d3800de79fa462e . 
+They have been added as `src/wm_stdin.rs` and `lsvisible.jq` (and `Cargo.toml`
+and `src/main.rs` modified to use the `stdin` feature).
+
+
+### How to use it
+Build from the upper directory as
+
+`cargo build --features stdin` 
+
+(the binary will be left under `/target`). Ensure that the `wmfocus` binary and
+`lsvisible.jq` are in your path.
+
+Then you can do (again, see
+https://www.reddit.com/r/bspwm/comments/qf0jd5/switching_and_swapping_windows_with/hi9ppyy/)
+
+
+    w="$(bspc wm -d | lsvisible.jq | wmfocus -p)"
+    #wmfocus needs patch for exit code, so:
+    [[ "$w" ]] && do-something-with $w
+
